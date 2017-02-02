@@ -1,17 +1,29 @@
 function files = get_file_names(directory,filestem,fullpath)
-% This function uses the DIR function to find files of a specific type in a
-% directory, and extract teh file names from the returned structure from
-% DIR. 
+% USE:
+%   FILES = GET_FILE_NAMES(DIRECTORY,FILESTEM,FULLPATH)
 %
-% The two required inputs are directory and filestem, which specify the
-% directory to seatch and the file or file stem (e.g., *.txt for all text
-% files) to search for. 
+% DESCRIPTION:
+%   GET_FILE_NAMES returns a cell array of strings with files found in a
+%   specified directory using the DIR function. This function can be used
+%   to find all files in a given directory, or files with a specific
+%   string. 
 %
-% By default, on the file names are returned. However
+% INPUT:
+%   DIRECTORY - A string specifying the directory to search.
+%
+%   FILESTEM - A string specifying a substring of the fiels to find in the
+%       DIRECTORY. To return all files, use '*'. To find files with a
+%       specific substring, such as all BMP files, use e.g., '*bmp'. 
+%
+%   FULLPATH - A logical input that, if TRUE, will return the file name
+%       with the DIRECTORY specified before the file name. If FALSE, only
+%       the file names are returned. 
+%
+% Created by Joshua D. Koen
+% Created on 02/02/2017
 
 % Determine what to do with fullpath
-if isempty(fullpath) || nargin < 3 || ...
-        ~exist('fullpath','var') || ~islogical(fullpath)
+if isempty(fullpath) || ~islogical(fullpath)
     fullpath = false;
 end
 
