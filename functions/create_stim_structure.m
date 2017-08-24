@@ -55,15 +55,17 @@ end
 
 % Check for method and define as numeric
 methodCheck = strcmpi(method,{'prop-val' 'head-data'});
-if ~any(methodCheck);
+if ~any(methodCheck)
     error('Incorect method input. Must be ''prop-val'' or ''f-mat''.')
 else
     methodID = find(methodCheck);
 end
 
 % If methodID == 2, error if varargin1  does not equal varargin2 columns
-if length(varargin{1}) ~= size(varargin{2},2)
-    error('Different number of columns and field names input.');
+if methodID == 2
+    if length(varargin{1}) ~= size(varargin{2},2)
+        error('Different number of columns and field names input.');
+    end
 end
 
 % Initialize the structure
