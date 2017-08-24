@@ -1,4 +1,4 @@
-function rMat = randomize_matrix(matrix,rngSeed)
+function rMat = randomize_matrix(matrix)
 % USE:
 %   RMAT = RANDOMIZE_MATRIX(MATRIX)
 %
@@ -16,11 +16,6 @@ function rMat = randomize_matrix(matrix,rngSeed)
 %
 % Created by Joshua D. Koen
 % Created on 12/02/2014
-
-% Set RNG seed if needed
-if ~isempty(rngSeed)
-    rng(rngSeed);
-end
 
 % Randomize the order of rows in the matrix, keeping all columns constant
 nTrials = size(matrix,1); % Number of rows in matrix
