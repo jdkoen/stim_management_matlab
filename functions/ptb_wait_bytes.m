@@ -1,6 +1,6 @@
 function [value, time] = ptb_wait_bytes(port,timeout,n_bytes)
 % USE:
-%   [values, times] = ptb_wait_bytes(port)
+%   [values, times] = ptb_wait_bytes(port,timeout,n_bytes)
 %
 % DESCRIPTION:
 %   PTB_WAIT_BYTES listens for a specified number of bytes to be availble
