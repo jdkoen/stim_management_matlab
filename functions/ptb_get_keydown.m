@@ -1,6 +1,7 @@
-function [keysdown, timesdown, n] = ptb_get_keydown(devidx,goodkeys,logfid)
+function [keysdown, timesdown, n, all_keysdown, all_timesdown, all_n] = ptb_get_keydown(devidx,goodkeys,logfid,suppresslog)
 % USE:
-%   [keysdown, timesdown] = ptb_get_keydown_at_t(endtime,goodkeys,logfid)
+%   [keysdown, timesdown, n, all_keysdown, all_timesdown, all_n] =  ...
+%               ptb_get_keydown(devidx,goodkeys,logfid)
 %
 % DESCRIPTION:
 %   PTB_GET_KEYDOWN returns a vector of Keycodes and Timestamps for key
@@ -19,20 +20,31 @@ function [keysdown, timesdown, n] = ptb_get_keydown(devidx,goodkeys,logfid)
 %
 %   logfid - File ID of the log file to pass to the LOGGER function. If
 %            empty, logging is only output to the screen
+%   suppresslog - Logical input that, if true, information will not be
+%                 logged to command window nor logfid
 % 
+% OUTPUTS:
+%   keysdown - vector of valid keycodes returned by KBEVENTGET
+%   timesdown - vector of valid timestamps returned by KBEVENTGET
+%   n - scalar value of the number of valid key presses
+%   all_keysdown - vector of all keycodes returned by KBEVENTGET
+%   all_timesdown - vector of all timestamps returned by KBEVENTGET
+%   all_n - scalar value of the number of total (with invalid) key presses
+%
 % Created by: Joshua D. Koen
 % Created on: 12/8/2017
+% Updated on: 12/13/2017 - added outputs for all valid and invalid key
+%                          presses
 
-%% FOR STARTERS (FIX LATER FOR ADDITIONAL FUNCTIONALITY)
-goodkeys = [];
+% Deal with logfid
 if isempty(logfid)
     logfid = [];
 end
 
 %% Report all events
 % Initialize outputs
-keysdown = [];
-timesdown = [];
+all_keysdown = [];
+all_timesdown = [];
 
 % Get all events in the queue
 while KbEventAvail(devidx)
@@ -40,18 +52,30 @@ while KbEventAvail(devidx)
     % Get the event, and filter out ones where evt.Pressed == 0
     evt = KbEventGet(devidx);
     evt = evt([evt.Pressed] == 1);
-    keysdown = horzcat(keysdown,evt.Keycode);
-    timesdown = horzcat(timesdown,evt.Time);
+    all_keysdown = horzcat(all_keysdown,evt.Keycode);
+    all_timesdown = horzcat(all_timesdown,evt.Time);
     
 end
 
+% Remove invalid keys and times
+all_keysdown = all_keysdown;
+all_timesdown = all_timesdown;
+bad_presses = ~ismember(all_keysdown,goodkeys);
+keysdown = all_keysdown(~bad_presses);
+timesdown = all_timesdown(~bad_presses);
+
 % Compute number of events
+all_n = length(all_keysdown);
 n = length(keysdown);
 
-% Log events
-for i = 1:n
-    logger(logfid,'%4.3f:\tKEY %s\tCODE %d\n', ...
-        timesdown(i),keysdown(i),KbName(keysdown(i)));
+% Log all key presses
+if ~suppresslog
+    for i = 1:all_n
+        
+        logger(logfid,'%4.4f:\tKEY-%s CODE-%d\n',all_timesdown(i), ...
+            upper(all_keysdown(i)),all_keysdown(i));
+        
+    end
 end
 
 end
