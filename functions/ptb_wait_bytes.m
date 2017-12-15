@@ -30,7 +30,7 @@ function [value, time] = ptb_wait_bytes(port,timeout,n_bytes)
 % Listen for bytes
 value = [];
 time = [];
-while GetSecs > timeout
+while true
     
     % Get number of bytes
     n = IOPort('BytesAvailable',port);
@@ -38,6 +38,11 @@ while GetSecs > timeout
     % If a single byte is availble, break
     if n == n_bytes
         [value,time] = ptb_read_bytes(port);
+        break;
+    end
+    
+    % Break if there is a timeout
+    if GetSecs > timeout
         break;
     end
     
